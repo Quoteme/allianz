@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>monti: Integrieren, Ausliefern, Betreiben</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="impress-not-supported">
+
+<div id="impress"
+     data-width="1920" data-height="1080"
+     data-max-scale="3" data-min-scale="0"
+     data-perspective="1000" data-transition-duration="900">
+
+<!-- ============ 1 · Titel ============ -->
+<div id="titel" class="step slide title-slide" data-x="0" data-y="0" data-footer="Luca Leon Happel · Zweitgespräch Allianz Leben · 09.10.2026">
+  <img class="logo" src="img/logo.png" alt="monti">
+  <p class="kicker">Fachpräsentation</p>
+  <h1>KI-Plattformen für regulierte Hochsicherheitsumgebungen</h1>
+  <p class="sub">Integration, Delivery und Betrieb · Fallbeispiel monti</p>
+  <p class="who">Luca Leon Happel <span>· Principal Systems Architect &amp; Core Developer, monti</span></p>
+  <div class="notes">
+    [0:00] Danke für die Einladung. Ich zeige euch ein Projekt, das ich vier Jahre lang gebaut und
+    betrieben habe: monti. Unsere Kunden sind Universitätskliniken, also regulierte Organisationen
+    mit hohen Sicherheitsanforderungen, ähnlich wie ein Versicherer. Die Medizin lasse ich weg und
+    konzentriere mich darauf, wie man unter solchen Vorgaben baut: wie die Komponenten geschnitten
+    sind, wie Code und KI-Modelle in die Produktion kommen, wie wir das bei drei Kunden betreiben und was ich davon zu Allianz
+    Leben mitnehmen würde. Rund 10 Minuten, Fragen gern zwischendurch.
+  </div>
+</div>
+
+<!-- ============ 2 · monti ============ -->
+<div id="monti" class="step slide" data-x="2300" data-y="0" data-z="0" data-footer="monti · Überblick">
+  <p class="kicker">01 · Überblick</p>
+  <h2>Fallbeispiel monti: KI auf hochsensiblen Daten</h2>
+  <div class="cols cols-60 grow">
+    <div style="display:flex;flex-direction:column;gap:60px;justify-content:center">
+      <p class="lead">Gesundheitsdaten als kontinuierlicher Datenstrom, ausgewertet von eigenen KI-Modellen. Produktiv seit 2022, je Kunde eine eigene Instanz.</p>
+      <p class="credit" style="margin:-30px 0 0;font-size:22px">2× Platz 1 beim Ideenwettbewerb der HHU 2023</p>
+      <div class="stats">
+        <div class="stat"><div class="n">3</div><div class="l">regulierte Großkunden</div></div>
+        <div class="stat"><div class="n">~150</div><div class="l">Nutzer:innen parallel</div></div>
+        <div class="stat"><div class="n">~10 GB</div><div class="l">pro Nutzer:in und Tag</div></div>
+        <div class="stat"><div class="n">1,84 M€</div><div class="l">Fördermittel</div></div>
+      </div>
+      <div class="card blue">
+        <h3>Principal Systems Architect &amp; Core Developer</h3>
+        <p style="margin:0">Architektur, Großteil von Backend und App, Teile der KI, Betrieb</p>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center">
+      <img src="img/app.png" alt="monti-App auf dem iPhone" style="max-height:780px;max-width:100%">
+    </div>
+  </div>
+  <div class="notes">
+    [0:30] Angefangen hat monti als Gründungsidee, beim Ideenwettbewerb der HHU 2023 haben wir zweimal
+    den ersten Platz geholt. Patient:innen tragen ein Armband, die App lädt die Rohdaten hoch, das Backend sammelt sie,
+    unsere KI-Algorithmen werten sie aus, etwa um Vorhofflimmern oder Infektionen früher zu erkennen.
+    Studienärzt:innen arbeiten über eine Weboberfläche. Standorte: Uniklinik Düsseldorf, HHU und
+    Uniklinik Aachen. Zur Größenordnung: rund 150 Patient:innen gleichzeitig, pro Person etwa 10 GB
+    Rohdaten am Tag, stark schwankend. Kein Big-Data-Konzern, aber genug, dass man über Speicher,
+    Backups und asynchrone Verarbeitung nachdenken muss.
+    Meine Rolle: Principal Systems Architect und Core Developer. Mitgegründet, Architektur entworfen, etwa zwei Drittel der Backend-Commits und fast
+    die ganze App geschrieben, an den Algorithmen mitentwickelt, Betrieb und BSI-Doku verantwortet.
+  </div>
+</div>
+
+<!-- ============ 2a · Kliniken (über Rahmenbedingungen) ============ -->
+<div id="kliniken" class="step slide" data-x="4600" data-y="-1400" data-footer="monti · Kunden">
+  <div class="cols cols-2 fill center-v" style="gap:40px">
+    <img src="img/aachen.jpg" alt="Uniklinik RWTH Aachen" class="shot">
+    <img src="img/duesseldorf.jpg" alt="Universitätsklinikum und Heinrich-Heine-Universität Düsseldorf aus der Luft" class="shot">
+  </div>
+  <p class="credit">Fotos: t-online (Uniklinik RWTH Aachen) · xity.de (Campus Düsseldorf)</p>
+  <div class="notes">
+    [1:30] Hier läuft monti: Uniklinik RWTH Aachen, und in Düsseldorf Uniklinik und Heinrich-Heine-Universität
+    auf einem Campus. Drei große Häuser mit eigener IT und eigenen Vorgaben.
+  </div>
+</div>
+
+<!-- ============ 3 · Rahmenbedingungen ============ -->
+<div id="rahmen" class="step slide" data-x="4600" data-y="0" data-footer="monti · Rahmenbedingungen">
+  <p class="kicker">02 · Ausgangslage</p>
+  <h2>Anforderungen regulierter Hochsicherheitskunden</h2>
+  <div class="cols cols-3 top fill" style="row-gap:40px">
+    <div class="card"><h3>Datenhoheit</h3><p>keine Daten an Dritte, auch nicht für KI</p></div>
+    <div class="card"><h3>Abgeschottete Netze</h3><p>DMZ, Proxys, PKI, Freigaben</p></div>
+    <div class="card"><h3>Regulatorik</h3><p>DSGVO · BSI · ISO 27001</p></div>
+    <div class="card"><h3>Fremdsysteme</h3><p>Hersteller-SDKs, proprietäre Formate</p></div>
+    <div class="card"><h3>Nachweisbarkeit</h3><p>jede Änderung auditierbar</p></div>
+    <div class="card"><h3>Verfügbarkeit 24/7</h3><p>Ausfall = Datenverlust</p></div>
+  </div>
+  <div class="bridge"><b>Bei euch</b>dieselben Anforderungen: DORA, AzTech-Freigaben, Landing Zone</div>
+  <div class="notes">
+    [2:00] Die Rahmenbedingungen haben fast jede technische Entscheidung bestimmt. Die wichtigste:
+    Daten bleiben beim jeweiligen Kunden, auch für die KI. Deshalb gibt es kein zentrales SaaS und
+    keine Cloud-KI-API, sondern eigenständige Installationen derselben Codebasis, jeweils in der DMZ.
+    Jeder Kunde hat eigene Proxys, Zertifikate und Freigabeprozesse, jede Änderung muss nachweisbar
+    sein. Hersteller-SDKs ändern sich ohne Vorwarnung. Und wir waren zwei Entwickler für App,
+    Backend, KI und Betrieb, also musste alles automatisiert sein.
+    Das ist, glaube ich, nah an dem, was ihr mit AzTech und der Landing Zone habt: Man ist Konsument
+    einer Plattform und baut innerhalb von Vorgaben, die man nicht selbst setzt.
+  </div>
+</div>
+
+<!-- ============ 4 · Architektur ============ -->
+<div id="architektur" class="step slide" data-x="6900" data-y="0" data-footer="monti · Architektur">
+  <p class="kicker">03 · Architektur</p>
+  <h2>Systemarchitektur je Kundeninstanz</h2>
+  <div class="grow">
+    <svg class="diagram" viewBox="0 0 1700 760" role="img" aria-label="Architekturdiagramm monti">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0b2545"/></marker>
+        <marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f5fbf"/></marker>
+        <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d7a46"/></marker>
+        <marker id="ahp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b4fbb"/></marker>
+      </defs>
+
+      <!-- Außenwelt -->
+      <text class="zl" x="10" y="24">AUSSEN</text>
+      <rect class="box ext" x="10" y="70" width="240" height="110" rx="10"/>
+      <text class="t" x="130" y="118" text-anchor="middle">Wearable</text>
+      <text class="s" x="130" y="148" text-anchor="middle">Rohdaten</text>
+      <path class="ar" d="M130,180 L130,266" marker-end="url(#ah)"/>
+
+      <rect class="box ext" x="10" y="270" width="240" height="110" rx="10"/>
+      <text class="t" x="130" y="318" text-anchor="middle">App</text>
+      <text class="s" x="130" y="348" text-anchor="middle">Flutter</text>
+
+      <rect class="box ext" x="10" y="490" width="240" height="110" rx="10"/>
+      <text class="t" x="130" y="538" text-anchor="middle">Studienteam</text>
+      <text class="s" x="130" y="568" text-anchor="middle">Browser</text>
+
+      <!-- Standort-Zone -->
+      <rect class="zone" x="290" y="10" width="1405" height="740" rx="14"/>
+      <text class="zl" x="312" y="44">JE KUNDE EIGENE INSTANZ · DMZ</text>
+
+      <rect class="box edge" x="320" y="250" width="200" height="160" rx="10"/>
+      <text class="t w" x="420" y="322" text-anchor="middle">nginx</text>
+      <text class="s w" x="420" y="354" text-anchor="middle">einziger Eingang</text>
+      <path class="ar b" d="M250,325 L316,325" marker-end="url(#ahb)"/>
+      <text class="lbl" x="258" y="312">REST</text>
+      <path class="ar b" d="M250,545 C300,545 300,400 316,392" marker-end="url(#ahb)"/>
+
+      <rect class="box ext" x="300" y="600" width="240" height="110" rx="10"/>
+      <text class="t" x="420" y="662" text-anchor="middle">Monitoring</text>
+
+      <!-- Dienste -->
+      <rect class="box" x="580" y="80" width="300" height="110" rx="10"/>
+      <text class="t" x="730" y="126" text-anchor="middle">API</text>
+      <text class="s" x="730" y="158" text-anchor="middle">FastAPI · OpenAPI</text>
+      <rect class="box" x="580" y="275" width="300" height="110" rx="10"/>
+      <text class="t" x="730" y="321" text-anchor="middle">Web</text>
+      <text class="s" x="730" y="353" text-anchor="middle">Flask · MFA</text>
+      <rect class="box" x="580" y="470" width="300" height="110" rx="10"/>
+      <text class="t" x="730" y="516" text-anchor="middle">PRO-Creator</text>
+      <text class="s" x="730" y="548" text-anchor="middle">Fragebögen</text>
+      <path class="ar" d="M520,290 L576,140" marker-end="url(#ah)"/>
+      <path class="ar" d="M520,330 L576,330" marker-end="url(#ah)"/>
+      <path class="ar" d="M520,370 L576,520" marker-end="url(#ah)"/>
+
+      <!-- Adapter, DB, Jobs -->
+      <rect class="box job" x="940" y="75" width="250" height="120" rx="10"/>
+      <text class="t" x="1065" y="128" text-anchor="middle">Format-Adapter</text>
+      <text class="s" x="1065" y="160" text-anchor="middle">asynchron</text>
+      <path class="ar g" d="M880,130 L936,130" marker-end="url(#ahg)"/>
+
+      <rect class="box data" x="940" y="260" width="250" height="160" rx="10"/>
+      <text class="t" x="1065" y="332" text-anchor="middle">PostgreSQL</text>
+      <text class="s" x="1065" y="364" text-anchor="middle">Alembic · Audit-Log</text>
+      <path class="ar g" d="M1065,195 L1065,256" marker-end="url(#ahg)"/>
+      <path class="ar" d="M880,330 L936,330" marker-end="url(#ah)"/>
+      <path class="ar" d="M880,170 C910,200 915,260 936,280" marker-end="url(#ah)"/>
+
+      <rect class="box job" x="940" y="510" width="250" height="110" rx="10"/>
+      <text class="t" x="1065" y="556" text-anchor="middle">Scheduler</text>
+      <text class="s" x="1065" y="588" text-anchor="middle">täglich</text>
+      <path class="ar g" d="M1065,510 L1065,424" marker-end="url(#ahg)"/>
+
+      <rect class="box data" x="1300" y="75" width="200" height="120" rx="10"/>
+      <text class="t" x="1400" y="128" text-anchor="middle">Backup</text>
+      <text class="s" x="1400" y="160" text-anchor="middle">pgBackRest</text>
+      <path class="ar b" d="M1190,280 L1320,199" marker-end="url(#ahb)"/>
+
+      <!-- KI -->
+      <rect class="box ai" x="1300" y="280" width="380" height="330" rx="12"/>
+      <text class="t ai" x="1490" y="330" text-anchor="middle">KI-Dienste</text>
+      <text class="s" x="1490" y="362" text-anchor="middle">Kubernetes · Docker</text>
+      <rect class="box ai2" x="1325" y="395" width="105" height="80" rx="8"/>
+      <text class="s" x="1377" y="441" text-anchor="middle">Modell</text>
+      <rect class="box ai2" x="1438" y="395" width="105" height="80" rx="8"/>
+      <text class="s" x="1490" y="441" text-anchor="middle">Modell</text>
+      <rect class="box ai2" x="1551" y="395" width="105" height="80" rx="8"/>
+      <text class="s" x="1603" y="441" text-anchor="middle">Modell</text>
+      <rect class="box ai2" x="1325" y="500" width="331" height="70" rx="8"/>
+      <text class="s" x="1490" y="542" text-anchor="middle">GPU · lokal im Haus</text>
+
+      <path class="ar ai" d="M1190,350 L1296,350" marker-end="url(#ahp)"/>
+      <text class="lbl ai sm" x="1200" y="340">Rohdaten</text>
+      <path class="ar ai" d="M1296,400 L1194,400" marker-end="url(#ahp)"/>
+      <text class="lbl ai sm" x="1200" y="428">Ergebnisse</text>
+    </svg>
+  </div>
+  <div class="notes">
+    [3:00] Das ist der Schnitt der Plattform, an jedem Standort gleich. Nach außen gibt es genau
+    einen Eingang, nginx mit TLS 1.3. Alle anderen Dienste sind nur intern erreichbar. Dahinter: die
+    API für die App, die Weboberfläche fürs Studienteam und der Fragebogen-Editor. Herstellerformate
+    wie WIFF und Realm übersetzen eigene Adapter, damit das Format des Herstellers nicht in unser
+    Datenmodell durchschlägt. Postgres ist die einzige Quelle der Wahrheit, gesichert mit pgBackRest.
+    Rechts die KI: Sie liest die Rohdaten, die Ergebnisse fließen zurück in die Datenbank und
+    erscheinen in der Weboberfläche. Dazu gleich mehr.
+  </div>
+</div>
+
+<!-- ============ 5 · Modell- und LLM-Integration ============ -->
+<div id="ki" class="step slide" data-x="9200" data-y="0" data-footer="monti · Modell- und LLM-Integration">
+  <p class="kicker">04 · KI-Integration</p>
+  <h2>KI als Dienst hinter einer Schnittstelle</h2>
+  <div class="cols cols-2 top fill" style="row-gap:40px">
+    <div class="card"><h3>Klarer Vertrag</h3><p>Rohdaten rein, Ergebnisse zurück in die Datenbank. Modelle austauschbar.</p></div>
+    <div class="card"><h3>Asynchron als Job</h3><p>Inferenz entkoppelt von Upload und Weboberfläche.</p></div>
+    <div class="card"><h3>Daten bleiben im Haus</h3><p>Docker und Kubernetes in der DMZ, GPU lokal, keine externe KI-API.</p></div>
+    <div class="card"><h3>LLM auf Freitext</h3><p>Unstrukturierte klinische Texte werden in strukturierte Felder übersetzt.</p></div>
+  </div>
+  <div class="bridge"><b>Bei euch</b><a class="ext" href="https://aws.amazon.com/bedrock/" target="_blank" rel="noopener">Bedrock</a>, <a class="ext" href="https://aws.amazon.com/sagemaker/" target="_blank" rel="noopener">SageMaker</a> oder eigene Modelle? Inklusive DORA-Drittparteienrisiko</div>
+  <div class="notes">
+    [4:30] Für die Anwendung ist die KI ein Dienst mit klarem Vertrag: Rohdaten rein, Ergebnisse
+    zurück in die Datenbank, von dort in die Weboberfläche. Dadurch konnten wir Modelle tauschen,
+    ohne App oder Web anzufassen. Die Auswertung läuft asynchron, niemand wartet auf eine GPU.
+    Eine externe KI-API war aus Datenschutzgründen ausgeschlossen, also lief alles als Container
+    in den DMZ der Kliniken und auf einem eigenen GPU-Cluster an der HHU.
+    Sprachmodelle haben wir für unstrukturierte klinische Texte genutzt. Bei euch wären das Anträge,
+    Schriftverkehr oder Leistungsfälle, und dieselbe Frage: Bedrock, SageMaker oder eigene Modelle,
+    und was heißt das fürs DORA-Drittparteienrisiko? Zu den Algorithmen selbst kann ich wegen der
+    Patente nicht ins Detail gehen.
+  </div>
+</div>
+
+<!-- ============ 6 · Schnittstellen ============ -->
+<div id="schnittstellen" class="step slide" data-x="0" data-y="1400" data-footer="monti · Schnittstellen">
+  <p class="kicker">05 · Integration</p>
+  <h2>Vier Integrationsmuster</h2>
+  <div class="cols cols-2 top fill" style="row-gap:40px">
+    <div class="card"><h3>API-First</h3><p>OpenAPI-Vertrag, Client generiert. Brüche fallen im Build auf.</p></div>
+    <div class="card"><h3>FRP / Event-driven</h3><p>Datenverarbeitung mittels Streams.</p></div>
+    <div class="card"><h3>Async high fidelity + throughput</h3><p>Eigener patentierter KI-Algorithmus.</p></div>
+    <div class="card"><h3>Patentierter KI-Algorithmus</h3><p>DE 10 2023 201 630 A1, mitentwickelt mit Prof. Kollmann</p></div>
+  </div>
+  <div class="bridge"><b>Als Team-Standard</b>Vorlage und Referenzimplementierung statt PDF: Vertrag, Adapter vor ABS, asynchrone KI-Jobs</div>
+  <div class="notes">
+    [5:45] Vier Muster, die ich in jedem Integrationsprojekt wieder anwenden würde.
+    Erstens API-First: Die OpenAPI-Spezifikation ist der Vertrag, der Dart-Client der App wird daraus
+    generiert. Passt er nicht mehr, schlägt der Build fehl und nicht erst die App beim Patienten.
+    Zweitens Functional Reactive Programming: Die Daten werden als Streams verarbeitet,
+    also als Folge von Ereignissen, die man deklarativ filtert, transformiert und kombiniert.
+    Drittens asynchron mit hoher Genauigkeit und hohem Durchsatz: Upload sofort quittiert, die
+    Auswertung läuft danach über unseren eigenen, patentierten KI-Algorithmus. Details dazu kann ich
+    wegen der Patente nicht nennen.
+    Viertens der KI-Algorithmus selbst: patentiert als DE 10 2023 201 630 A1, mitentwickelt mit
+    Prof. Kollmann. Für die Plattform ist er ein Dienst hinter dem Vertrag. Bei euch säße so ein
+    Adapter vor dem ABS-Datenmodell.
+  </div>
+</div>
+
+<!-- ============ 11 · Lessons ============ -->
+<div id="lessons" class="step slide" data-x="2300" data-y="1400" data-footer="monti · Lessons Learned">
+  <p class="kicker">06 · Lessons Learned</p>
+  <h2>Bewährte Muster und Verbesserungen</h2>
+  <div class="fill-col">
+  <div class="story" style="margin-bottom:60px"><b>Größte Herausforderung</b>Software von Drittanbietern folgte eigenen Konventionen statt etablierter Protokolle. Deshalb haben wir die KI-Verarbeitung selbst übernommen.</div>
+  <div class="cols cols-2">
+    <div>
+      <h3 style="color:var(--green)">Bewährt</h3>
+      <ul class="clean">
+        <li>Fremdsysteme hinter Adaptern</li>
+        <li>Vertrag zuerst, Client generiert</li>
+        <li>ganzer Stack in der CI</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="color:var(--red)">Heute anders</h3>
+      <ul class="clean">
+        <li>Queue statt In-Process-Task</li>
+        <li>Secret-Manager statt <code>.env</code></li>
+        <li>versionierte Images als Release</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <div class="notes">
+    [7:00] Die größte Herausforderung war die Zusammenarbeit mit Software von Drittanbietern. Die
+    folgte oft eigenen Konventionen statt etablierter Protokolle, und darauf hatten wir wenig Einfluss.
+    Deshalb haben wir die KI-Verarbeitung selbst übernommen, statt uns auf die Auswertung des
+    Herstellers zu verlassen. Ein Beispiel für die Abhängigkeit: 2025 brach Xcode 16 das
+    Hersteller-SDK, drei Monate keine App-Releases, bis wir das SDK selbst repariert hatten.
+    Was uns gerettet hat: Weil Fremdsoftware hinter Adaptern lag, mussten wir am Backend und am
+    Datenmodell nichts ändern. Ebenso bewährt: der generierte Client und der komplette Stack in der CI.
+    Heute anders: echte Queue mit Retry und Dead Letter Queue statt Hintergrund-Task, Secrets in einen
+    Secret-Manager mit Secret-Scanning in der CI, Releases als versionierte Images statt Build auf
+    dem Zielserver.
+  </div>
+</div>
+
+<!-- ============ 10 · Übertrag Allianz Leben ============ -->
+<div id="transfer" class="step slide" data-x="4600" data-y="1400" data-footer="Übertrag · Allianz Leben">
+  <p class="kicker">07 · Übertrag</p>
+  <h2>So würde ich einen KI-Use-Case bei euch anbinden</h2>
+  <div class="grow">
+    <svg class="diagram" viewBox="0 0 1700 560" role="img" aria-label="Skizze: KI-Use-Case bei Allianz Leben">
+      <defs>
+        <marker id="aht" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0b2545"/></marker>
+        <marker id="ahtp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6b4fbb"/></marker>
+      </defs>
+
+      <!-- Bei euch -->
+      <text class="zl" x="0" y="30">BESTAND</text>
+      <rect class="zone" x="375" y="0" width="990" height="250" rx="14"/>
+      <text class="zl" x="397" y="30">ONEDIA · AWS · AZTECH LANDING ZONE</text>
+
+      <rect class="box edge" x="0" y="80" width="280" height="140" rx="10"/>
+      <text class="t w" x="140" y="140" text-anchor="middle">ABS</text>
+      <text class="s w" x="140" y="174" text-anchor="middle">DB2</text>
+      <path class="ar" d="M280,150 L381,150" marker-end="url(#aht)"/>
+      <text class="lbl sm" x="290" y="136">CDC · Batch</text>
+
+      <rect class="box data" x="385" y="80" width="280" height="140" rx="10"/>
+      <text class="t" x="525" y="140" text-anchor="middle">Datenprodukt</text>
+      <text class="s" x="525" y="174" text-anchor="middle">Snowflake · S3</text>
+      <path class="ar" d="M665,150 L716,150" marker-end="url(#aht)"/>
+
+      <rect class="box job" x="720" y="80" width="280" height="140" rx="10"/>
+      <text class="t" x="860" y="140" text-anchor="middle">Event / Queue</text>
+      <text class="s" x="860" y="174" text-anchor="middle">EventBridge · SQS</text>
+      <path class="ar ai" d="M1000,150 L1051,150" marker-end="url(#ahtp)"/>
+
+      <rect class="box ai" x="1055" y="80" width="280" height="140" rx="10"/>
+      <text class="t ai" x="1195" y="140" text-anchor="middle">KI-Dienst</text>
+      <text class="s" x="1195" y="174" text-anchor="middle">SageMaker · Bedrock</text>
+      <path class="ar ai" d="M1335,150 L1416,150" marker-end="url(#ahtp)"/>
+      <text class="lbl ai sm" x="1343" y="136">+ Audit</text>
+
+      <rect class="box" x="1420" y="80" width="280" height="140" rx="10"/>
+      <text class="t" x="1560" y="140" text-anchor="middle">Fachsystem</text>
+      <text class="s" x="1560" y="174" text-anchor="middle">Sachbearbeitung</text>
+
+      <!-- Entsprechung bei monti -->
+      <text class="zl" x="0" y="330">BEI MONTI</text>
+      <path class="ar" d="M140,220 L140,360" style="stroke-dasharray:4 6;stroke:#8a99ab"/>
+      <path class="ar" d="M525,220 L525,360" style="stroke-dasharray:4 6;stroke:#8a99ab"/>
+      <path class="ar" d="M860,220 L860,360" style="stroke-dasharray:4 6;stroke:#8a99ab"/>
+      <path class="ar" d="M1195,220 L1195,360" style="stroke-dasharray:4 6;stroke:#8a99ab"/>
+      <path class="ar" d="M1560,220 L1560,360" style="stroke-dasharray:4 6;stroke:#8a99ab"/>
+
+      <rect class="box ext" x="0" y="360" width="280" height="110" rx="10"/>
+      <text class="t" x="140" y="408" text-anchor="middle">Hersteller-SDK</text>
+      <text class="s" x="140" y="440" text-anchor="middle">Fremdformat</text>
+      <rect class="box ext" x="385" y="360" width="280" height="110" rx="10"/>
+      <text class="t" x="525" y="408" text-anchor="middle">Adapter</text>
+      <text class="s" x="525" y="440" text-anchor="middle">→ PostgreSQL</text>
+      <rect class="box ext" x="720" y="360" width="280" height="110" rx="10"/>
+      <text class="t" x="860" y="408" text-anchor="middle">Async-Job</text>
+      <text class="s" x="860" y="440" text-anchor="middle">Scheduler</text>
+      <rect class="box ext" x="1055" y="360" width="280" height="110" rx="10"/>
+      <text class="t" x="1195" y="408" text-anchor="middle">KI-Container</text>
+      <text class="s" x="1195" y="440" text-anchor="middle">Kubernetes · GPU</text>
+      <rect class="box ext" x="1420" y="360" width="280" height="110" rx="10"/>
+      <text class="t" x="1560" y="408" text-anchor="middle">Weboberfläche</text>
+      <text class="s" x="1560" y="440" text-anchor="middle">Studienteam</text>
+
+      <text class="s" x="0" y="540" style="font-size:24px;fill:#17212b">Gleiches Muster, andere Bausteine: <tspan font-weight="700">Adapter vor dem Bestand</tspan> · <tspan font-weight="700">Vertrag</tspan> · <tspan font-weight="700">asynchron</tspan> · <tspan font-weight="700">Ergebnis nachvollziehbar zurück</tspan></text>
+    </svg>
+  </div>
+  <div class="bridge"><b>Offen</b>Schreibpfad zurück ins ABS? Human-in-the-Loop und Audit-Trail für DORA und AI Act</div>
+  <div class="notes">
+    [8:00] Wie würde das bei euch aussehen? Oben eine Skizze, unten das Gegenstück bei monti.
+    ABS direkt abzufragen verträgt ein Kernsystem dieser Größe nicht, also kommen die Daten über CDC
+    oder Batch als Datenprodukt in OneDIA an. Das ist mein Adapter: Das ABS-Datenmodell schlägt
+    nicht ins KI-Modell durch. Ein Event oder eine Queue stößt den KI-Dienst an, Bedrock oder
+    SageMaker, asynchron, mit Retry und Dead Letter Queue. Das Ergebnis geht mit Audit-Trail zurück
+    ins Fachsystem, also Eingabe, Modellversion, Ausgabe, wer entschieden hat.
+    Offen ist für mich vor allem der Rückweg: Darf etwas zurück ins ABS geschrieben werden, und wo
+    sitzt der Mensch in der Schleife? Das würde ich mit OneDIA und AzTech zuerst klären.
+  </div>
+</div>
+
+<!-- ============ 12 · Abschluss ============ -->
+<div id="fragen" class="step slide title-slide" data-x="6900" data-y="1400" data-footer="Luca Leon Happel · lucahappel99@gmx.de">
+  <p class="kicker">Danke</p>
+  <h1>Fragen?</h1>
+  <div class="cols cols-2" style="margin-top:70px;gap:80px">
+    <div>
+      <h3>Meine ersten 90 Tage</h3>
+      <ul class="clean">
+        <li>Pipelines und Freigabewege verstehen</li>
+        <li>ABS-Zugriff über OneDIA kennenlernen</li>
+        <li>Referenz-Integration für einen KI-Dienst</li>
+        <li>daraus Vorlagen fürs Team</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Meine Fragen an euch</h3>
+      <ul class="clean">
+        <li>Wie kommt Code heute in Produktion?</li>
+        <li>Wie arbeiten Integration und DevOps zusammen?</li>
+        <li>Wo hakt es zwischen Data Science und Betrieb?</li>
+        <li>Wie laufen KI-Dienste heute?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notes">
+    [9:30] Zum Schluss, was ich in den ersten drei Monaten mit euch angehen würde: erst verstehen,
+    wie bei euch deployt und von AzTech freigegeben wird und wie man über OneDIA an ABS-Daten kommt,
+    dann eine Referenz-Integration bauen: KI-Dienst hinter Vertrag, asynchron, mit Monitoring.
+    Daraus werden Vorlagen fürs Team. Standards, die niemand benutzt, sind keine, deshalb lieber
+    eine funktionierende Vorlage als ein PDF.
+    Danke fürs Zuhören. Gern zuerst eure Fragen, dann hätte ich selbst ein paar
+    (CI-Werkzeug, ECS oder EKS, Bedrock, SageMaker oder eigene Container?).
+  </div>
+</div>
+
+<!-- ================= ANHANG ================= -->
+
+<!-- ============ 7 · CI/CD ============ -->
+<div id="cicd" class="step slide appendix" data-x="0" data-y="2800" data-footer="monti · CI/CD">
+  <p class="kicker">Anhang · CI/CD</p>
+  <h2>CI/CD-Pipeline mit Health-Gates</h2>
+  <div class="grow">
+    <svg class="diagram" viewBox="0 0 1390 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="CI/CD-Pipeline">
+      <defs>
+        <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0b2545"/></marker>
+      </defs>
+      <text class="zl" x="0" y="30">JEDER PUSH</text>
+      <rect class="box ext" x="0" y="55" width="220" height="120" rx="10"/>
+      <text class="t" x="110" y="105" text-anchor="middle">pre-commit</text>
+      <text class="s" x="110" y="138" text-anchor="middle">Format</text>
+      <path class="ar" d="M220,115 L276,115" marker-end="url(#ah2)"/>
+      <rect class="box" x="280" y="55" width="300" height="120" rx="10"/>
+      <text class="t" x="430" y="105" text-anchor="middle">Lint &amp; Typen</text>
+      <text class="s" x="430" y="138" text-anchor="middle">ruff · mypy · pyright</text>
+      <path class="ar" d="M580,115 L636,115" marker-end="url(#ah2)"/>
+      <rect class="box" x="640" y="55" width="300" height="120" rx="10"/>
+      <text class="t" x="790" y="105" text-anchor="middle">563 Tests</text>
+      <text class="s" x="790" y="138" text-anchor="middle">pytest</text>
+
+      <text class="zl" x="0" y="250">JEDER PULL REQUEST</text>
+      <rect class="box" x="0" y="275" width="300" height="130" rx="10"/>
+      <text class="t" x="150" y="333" text-anchor="middle">Build</text>
+      <text class="s" x="150" y="366" text-anchor="middle">Images</text>
+      <path class="ar" d="M300,340 L356,340" marker-end="url(#ah2)"/>
+      <rect class="box" x="360" y="275" width="300" height="130" rx="10"/>
+      <text class="t" x="510" y="333" text-anchor="middle">Stack starten</text>
+      <text class="s" x="510" y="366" text-anchor="middle">wie in Produktion</text>
+      <path class="ar" d="M660,340 L716,340" marker-end="url(#ah2)"/>
+      <rect class="box job" x="720" y="275" width="300" height="130" rx="10"/>
+      <text class="t" x="870" y="333" text-anchor="middle">Health-Gates</text>
+      <text class="s" x="870" y="366" text-anchor="middle">DB · /health</text>
+      <path class="ar" d="M1020,340 L1076,340" marker-end="url(#ah2)"/>
+      <rect class="box data" x="1080" y="275" width="300" height="130" rx="10"/>
+      <text class="t" x="1230" y="333" text-anchor="middle">Bei Fehler</text>
+      <text class="s" x="1230" y="366" text-anchor="middle">Logs als Artefakt</text>
+
+      <text class="zl" x="1080" y="30">APP</text>
+      <rect class="box ext" x="1080" y="55" width="300" height="120" rx="10"/>
+      <text class="t" x="1230" y="105" text-anchor="middle">Mobile Builds</text>
+      <text class="s" x="1230" y="138" text-anchor="middle">APK · TestFlight</text>
+
+      <text class="s" x="0" y="480" style="font-size:24px;fill:#17212b">Feature → <tspan font-weight="700">dev</tspan> → <tspan font-weight="700">master</tspan> · Migrationen automatisch beim Start</text>
+    </svg>
+  </div>
+  <div class="notes">
+    Nur bei Nachfrage zeigen. Zwei Stufen. Bei jedem Push laufen Linting, zwei Typchecker und gut 560 Tests, über just
+    und uv. Bei jedem Pull Request auf dev oder master baut die Pipeline den kompletten Stack und
+    fährt ihn mit docker compose hoch, genau wie in Produktion. Erst wenn Datenbank und
+    Health-Endpoint grün sind, ist der PR mergebar. Schlägt etwas fehl, landen die Logs als Artefakt
+    im Run. Die App baut Android-APKs in GitHub Actions, iOS geht über TestFlight.
+    Datenbankmigrationen laufen beim Start des Web-Containers automatisch (alembic upgrade head).
+    Falls ihr fragt, wie man die zurückrollt: gar nicht gern, deshalb sollten Migrationen
+    abwärtskompatibel sein, also erst erweitern, dann umstellen, dann aufräumen.
+  </div>
+</div>
+
+<!-- ============ 9 · Betrieb ============ -->
+<div id="betrieb" class="step slide appendix" data-x="2300" data-y="2800" data-footer="monti · Betrieb">
+  <p class="kicker">Anhang · Betrieb</p>
+  <h2>Backup, Monitoring, Härtung</h2>
+  <div class="cols cols-3 top fill">
+    <div class="card">
+      <h3>Backup</h3>
+      <ul class="clean tight">
+        <li>pgBackRest, WAL-Archiv</li>
+        <li>verschlüsselt</li>
+        <li>Point-in-Time-Recovery</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Monitoring</h3>
+      <ul class="clean tight">
+        <li>Netdata</li>
+        <li>Uptime-Kuma</li>
+        <li>Health-Endpoint</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Härtung</h3>
+      <ul class="clean tight">
+        <li>TLS 1.3, strikte CSP</li>
+        <li>MFA für Web und SSH</li>
+        <li>Audit-Log, Löschfristen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="bridge"><b>In AWS</b><a class="ext" href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIT.html" target="_blank" rel="noopener">RDS-PITR</a> · <a class="ext" href="https://aws.amazon.com/cloudwatch/" target="_blank" rel="noopener">CloudWatch</a> · <a class="ext" href="https://aws.amazon.com/iam/" target="_blank" rel="noopener">IAM</a> · <a class="ext" href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html" target="_blank" rel="noopener">Security Groups</a></div>
+  <div class="notes">
+    Nur bei Nachfrage zeigen. Betrieb heißt für mich: Daten gehen nicht verloren, Ausfälle bemerken wir vor den
+    Nutzer:innen, und die Angriffsfläche ist klein. pgBackRest archiviert das WAL kontinuierlich,
+    sonntags Full, werktags differenziell, wir können also auf einen Zeitpunkt zurückspringen.
+    Netdata und Uptime-Kuma melden Probleme. Dazu TLS 1.3 mit HSTS-Preload, eine Nonce-basierte
+    Content Security Policy, TOTP-MFA, Firewall und 90 Tage Löschfrist für Logs.
+    Der Düsseldorfer Server handelt inzwischen sogar einen Post-Quanten-Schlüsselaustausch aus.
+    In AWS übernehmen das RDS, CloudWatch und IAM. Die Dienste sind neu für mich, die Anforderungen
+    dahinter kenne ich aus dem Betrieb. Compliance-Details habe ich im Anhang.
+  </div>
+</div>
+
+<!-- ============ 8 · Standorte ============ -->
+<div id="standorte" class="step slide appendix" data-x="4600" data-y="2800" data-footer="monti · Kunden">
+  <p class="kicker">Anhang · Kunden</p>
+  <h2>Drei regulierte Großkunden im Produktivbetrieb</h2>
+  <div class="cols cols-3 top fill">
+    <figure class="site"><img src="img/ukd.jpg" alt="Universitätsklinikum Düsseldorf"><figcaption><h3>Universitätsklinikum Düsseldorf</h3><p>eigene Instanz</p></figcaption></figure>
+    <figure class="site"><img src="img/hhu.jpg" alt="Heinrich-Heine-Universität Düsseldorf"><figcaption><h3>Heinrich-Heine-Universität Düsseldorf</h3><p>eigene Instanz</p></figcaption></figure>
+    <figure class="site"><img src="img/uka.jpg" alt="Uniklinik RWTH Aachen"><figcaption><h3>Uniklinik RWTH Aachen</h3><p>eigene Instanz</p></figcaption></figure>
+  </div>
+  <p class="credit">Fotos: Wikimedia Commons · ZOM UKD: EinAnonymerBenutzerVonVielen, CC BY-SA 4.0 · ULB Düsseldorf: gemeinfrei · Klinikum Aachen: Choinowski, CC BY-SA 4.0</p>
+  <div class="notes">
+    Nur bei Nachfrage zeigen. monti läuft bei drei Großkunden: dem Universitätsklinikum Düsseldorf, der
+    Heinrich-Heine-Universität und der Uniklinik RWTH Aachen. Jeder Kunde hat eine eigene Instanz in
+    seiner eigenen Infrastruktur, alle laufen auf derselben Codebasis.
+    Falls gefragt: Unterschiede nur per Konfiguration, Rollout in Patch-Fenstern. Verbesserungspotenzial:
+    versionierte Images aus einer Registry, gestufter Rollout, Rolling Updates statt kurzer Downtime.
+  </div>
+</div>
+
+<div id="a-container" class="step slide appendix" data-x="6900" data-y="2800" data-footer="Anhang · Containerisierung">
+  <p class="kicker">Anhang · Containerisierung</p>
+  <h2>Container-Stack als Code</h2>
+  <div class="cols cols-2 grow center-v">
+<pre class="code"><span class="c"># docker-compose.yaml (vereinfacht)</span>
+<span class="k">x-templates:</span>
+  <span class="k">base-python-app:</span> <span class="c">&amp;base-python-app</span>
+    <span class="k">user:</span> <span class="s">"${UID}:${GID}"</span>     <span class="c"># kein root</span>
+    <span class="k">restart:</span> always
+    <span class="k">logging:</span> <span class="c">*logging</span>        <span class="c"># Rotation</span>
+    <span class="k">environment:</span> <span class="c">*proxy-env</span> <span class="c"># Kliniknetz</span>
+
+<span class="k">services:</span>
+  <span class="k">api:</span>
+    <span class="k">&lt;&lt;:</span> <span class="c">*base-python-app</span>
+    <span class="k">ports:</span> [<span class="s">"127.0.0.1:8000:8000"</span>]
+    <span class="k">depends_on:</span>
+      <span class="k">database:</span>
+        <span class="k">condition:</span> service_healthy
+  <span class="k">database:</span>
+    <span class="k">healthcheck:</span>
+      <span class="k">test:</span> pg_isready …</pre>
+    <ul class="clean">
+      <li>Templates als Team-Standard</li>
+      <li>nur nginx nach außen offen</li>
+      <li>Healthchecks statt Sleep</li>
+      <li>Proxy in Build und Laufzeit</li>
+    </ul>
+  </div>
+  <div class="notes">Nur bei Fragen zu Docker/Compose zeigen. Neue Dienste erben Logging, Proxy, User und
+    Restart-Policy. Alles außer nginx bindet an 127.0.0.1. Proxy-Variablen fließen in Build und Laufzeit,
+    so baut das Image auch hinter der Klinik-Firewall.</div>
+</div>
+
+<div id="a-compliance" class="step slide appendix" data-x="9200" data-y="2800" data-footer="Anhang · Compliance">
+  <p class="kicker">Anhang · Regulatorik</p>
+  <h2>Compliance im Betrieb</h2>
+  <div class="cols cols-2 top fill">
+    <div>
+      <h3>BSI-Grundschutz-Bausteine</h3>
+      <div class="tags">
+        <span class="tag">APP.3.1 Webanwendungen</span>
+        <span class="tag">APP.3.2 Webserver</span>
+        <span class="tag">OPS.1.1.2 IT-Administration</span>
+        <span class="tag">OPS.1.1.3 Patch &amp; Änderung</span>
+        <span class="tag">OPS.1.1.4 Schadprogramme</span>
+        <span class="tag">ORP.4 Identitäten &amp; Rechte</span>
+        <span class="tag">SYS.1.1 Server</span>
+      </div>
+    </div>
+    <div>
+      <h3>Dokumentiert und gelebt</h3>
+      <ul class="clean tight">
+        <li>Berechtigungskonzept</li>
+        <li>Patch- und Änderungsmanagement</li>
+        <li>Datenschutz-Folgenabschätzung</li>
+        <li>regelmäßige Prüfungen</li>
+      </ul>
+    </div>
+  </div>
+  <div class="bridge"><b>Bei euch</b>DORA: IKT-Risikomanagement, Änderungsnachweise, Resilienztests</div>
+  <div class="notes">Nur bei Fragen zu DORA, BSI oder Datenschutz zeigen. Kernaussage: Compliance funktioniert
+    nur, wenn sie in Pipeline und Betrieb eingebaut ist. Änderungen über PR und Review, Migrationen
+    versioniert, Zugriffe im Audit-Log. Den Audit-Nachweis muss man dann nicht extra erstellen.</div>
+</div>
+
+<div id="a-nix" class="step slide appendix" data-x="11500" data-y="2800" data-footer="Anhang · Infrastructure as Code">
+  <p class="kicker">Anhang · Infrastructure as Code</p>
+  <h2>Nix und Terraform</h2>
+  <div class="cols cols-2 top fill">
+    <div class="card blue">
+      <h3>Gemeinsam</h3>
+      <ul class="clean tight">
+        <li>Soll-Zustand im Repo</li>
+        <li>Versionen gepinnt (Lock-Datei)</li>
+        <li>Änderungen nur per Review</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Anders</h3>
+      <ul class="clean tight">
+        <li><a class="ext" href="https://developer.hashicorp.com/terraform" target="_blank" rel="noopener">Terraform</a>: externe Ressourcen, State, Drift</li>
+        <li>Nix: Umgebungen und Systeme</li>
+        <li>neu für mich: Remote State, AWS-Provider</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notes">
+    flake.nix und flake.lock pinnen Python, PHP, Node, Flutter und openapi-generator; lokal und in
+    der CI dieselbe Umgebung. Mein meistgenutztes öffentliches Repo ist mach-nix-template (71 Sterne).
+    Terraform habe ich nicht produktiv eingesetzt, das sage ich gleich dazu. Gemeinsam ist das
+    deklarative Denken. Neu wären für mich State-Management und die Provider. Die Einarbeitung
+    traue ich mir schnell zu.
+  </div>
+</div>
+
+<!-- Overview für die Fragerunde -->
+<div id="overview" class="step" data-x="5750" data-y="700" data-z="0" data-scale="7.5"></div>
+
+</div>
+
+<div class="impress-progressbar"><div></div></div>
+<div class="impress-progress"></div>
+
+<script src="js/impress.js"></script>
+<script>
+  // Seitennummern: Hauptteil fortlaufend, Anhang als A1, A2, ...
+  var main = document.querySelectorAll('.step.slide:not(.appendix)');
+  main.forEach(function (el, i) {
+    var n = document.createElement('span');
+    n.className = 'pageno';
+    n.textContent = (i + 1) + ' / ' + main.length;
+    el.appendChild(n);
+  });
+  document.querySelectorAll('.step.slide.appendix').forEach(function (el, i) {
+    var n = document.createElement('span');
+    n.className = 'pageno';
+    n.textContent = 'A' + (i + 1);
+    el.appendChild(n);
+  });
+  impress().init();
+</script>
+</body>
+</html>
